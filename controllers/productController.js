@@ -8,6 +8,7 @@ const createProduct = async (req, res, next) => {
     name,
     price,
     image: `http://localhost:3001/${req.file.filename}`,
+    userId: req.currentUser._id,
   });
 
   try {
@@ -19,7 +20,20 @@ const createProduct = async (req, res, next) => {
   res.status(201).json(product);
 };
 
-const getProducts = async (req, res, next) => {};
+const getProducts = async (req, res, next) => {
+  let products;
+
+  try {
+    products = await Product.find(
+      { userId: req.currentUser._id },
+      { userId: true }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+
+  res.status(200).json(products);
+};
 
 const updateProductById = async (req, res, next) => {};
 

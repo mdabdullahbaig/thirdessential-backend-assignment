@@ -53,13 +53,13 @@ const login = async (req, res, next) => {
   }
 
   if (!existedUser) {
-    return next(HttpError.Forbidden());
+    return next(HttpError.Forbidden("Invalid Credentials"));
   }
 
   const isValidPassword = await bcrypt.compare(password, existedUser.password);
 
   if (!isValidPassword) {
-    return next(HttpError.Forbidden());
+    return next(HttpError.Forbidden("Invalid Credentials"));
   }
 
   try {
@@ -100,6 +100,11 @@ const logout = async (req, res, next) => {
 };
 
 const getUsers = async (req, res, next) => {
+  console.log(req.currentUser);
+
+  if (!req.currentUser.isSuperAdmin) {
+    return next(HttpError.Unauthorized());
+  }
   let users;
 
   try {
@@ -115,25 +120,12 @@ const getUsers = async (req, res, next) => {
   res.status(200).json(users);
 };
 
-const getUserById = async (req, res, next) => {
-  const userId = req.params.id;
-  let user;
-
-  try {
-    user = await User.findOne({ _id: userId, isSuperAdmin: false });
-  } catch (error) {
-    return next(HttpError.InternalServerError(error.message));
-  }
-
-  if (!user) {
-    return next(HttpError.NotFound("User not Found."));
-  }
-
-  res.status(200).json(user);
+const getCurrentUser = async (req, res, next) => {
+  res.status(200).json(req.currentUser);
 };
 
 exports.register = register;
 exports.login = login;
 exports.logout = logout;
 exports.getUsers = getUsers;
-exports.getUserById = getUserById;
+exports.getCurrentUser = getCurrentUser;

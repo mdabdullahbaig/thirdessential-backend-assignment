@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const userRoute = require("./routes/userRoute");
 const productRoute = require("./routes/productRoute");
 const HttpError = require("./utils/HttpError");
@@ -12,6 +13,7 @@ const PORT = 3001;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("images"));
+app.use(cors());
 
 // Route Level Middleware
 app.use("/api/users", userRoute);

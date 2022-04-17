@@ -5,6 +5,7 @@ const {
   createProduct,
   getProducts,
 } = require("../controllers/productController");
+const auth = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -30,7 +31,7 @@ const filefilter = (req, file, cb) => {
 
 const upload = multer({ storage: storage, fileFilter: filefilter });
 
-router.post("/", upload.single("image"), createProduct);
+router.post("/", upload.single("image"), auth, createProduct);
 router.get("/", getProducts);
 
 module.exports = router;
