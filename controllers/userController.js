@@ -6,6 +6,10 @@ const HttpError = require("../utils/HttpError");
 const register = async (req, res, next) => {
   const { name, email, phone, address, password } = req.body;
 
+  if (!req.currentUser.isSuperAdmin) {
+    return next(HttpError.Unauthorized());
+  }
+
   let existedUser;
 
   try {
@@ -75,12 +79,12 @@ const login = async (req, res, next) => {
 };
 
 const logout = async (req, res, next) => {
-  const currentUserId = req.user.id;
+  const userId = req.currentUser._id;
 
   let existedUser;
 
   try {
-    existedUser = await User.findOne({ _id: currentUserId });
+    existedUser = await User.findOne({ _id: userId });
   } catch (error) {
     next(new HttpError.InternalServerError(error.message));
   }

@@ -10,7 +10,7 @@ const auth = require("../middleware/auth");
 
 const router = express.Router();
 
-router.post("/register", register);
+router.post("/register", auth, register);
 router.post("/login", login);
 router.post("/logout", auth, logout);
 router.get("/", auth, getUsers);
